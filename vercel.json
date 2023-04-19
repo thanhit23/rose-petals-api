@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "multikart-api",
+  "name": "rose-petals-api",
   "builds": [
     { "src": "src/index.js", "use": "@vercel/node" }
   ],
