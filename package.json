@@ -1,7 +1,7 @@
 {
-  "name": "multikart-api",
+  "name": "rose-petals-api",
   "version": "1.7.0",
-  "description": "Multikart API",
+  "description": "Rose Petals Api",
   "main": "src/index.js",
   "license": "MIT",
   "engines": {
