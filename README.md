@@ -5,8 +5,8 @@
 Clone the repo:
 
 ```bash
-git clone https://github.com/tannguyenit/multikart-api
-cd multikart-api
+git clone https://github.com/thanhit23/rose-petals-api.git
+cd rose-petals-api
 yarn install
 ```
 
