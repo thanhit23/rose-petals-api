@@ -8,6 +8,10 @@ const register = catchAsync(async (req, res) => {
   res.createSuccess({ user, tokens });
 });
 
+const me = catchAsync(async (req, res) => {
+  res.success(req.user);
+});
+
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const user = await authService.loginUserWithEmailAndPasswordAndRole(email, password, roles.user);
@@ -48,6 +52,7 @@ const verifyEmail = catchAsync(async (req, res) => {
 });
 
 module.exports = {
+  me,
   register,
   login,
   logout,
