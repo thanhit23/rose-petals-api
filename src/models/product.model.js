@@ -36,6 +36,14 @@ const productSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Brand',
     },
+    rating: {
+      type: Number,
+      default: 0,
+    },
+    size: {
+      type: Array,
+      default: ['M', 'L', 'XL'],
+    },
     deletedAt: {
       type: Date,
       default: null,
