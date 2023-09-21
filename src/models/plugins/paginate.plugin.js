@@ -1,4 +1,4 @@
-const { map } = require('lodash')
+const { map } = require('lodash');
 
 const paginate = (schema) => {
   /**
@@ -17,6 +17,7 @@ const paginate = (schema) => {
    * @param {number} [options.page] - Current page (default = 1)
    * @returns {Promise<QueryResult>}
    */
+  // eslint-disable-next-line no-param-reassign
   schema.statics.paginate = async function (search, options) {
     let sort = ``;
     if (options.sortBy) {
@@ -30,11 +31,11 @@ const paginate = (schema) => {
       sort = 'createdAt';
     }
 
-    const { searchCriteria = null, ...filter} = search
+    const { searchCriteria = null, ...filter } = search;
     if (searchCriteria) {
       map(filter, (value, key) => {
         if (searchCriteria[key] && searchCriteria[key] === 'like') {
-          filter[key] = { $regex: value }
+          filter[key] = { $regex: value };
         }
       });
     }
