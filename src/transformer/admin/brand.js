@@ -3,7 +3,7 @@ const baseUrl = process.env.APP_URL;
 const getBrandsList = (data) => {
   const { results, ...meta } = data;
   const products = results.map((i) => {
-    const { _id, name, logo, createdAt, updatedAt, slug } = i.toObject();
+    const { _id, name, logo, createdAt, updatedAt, deleteAt, slug } = i.toObject();
     return {
       _id,
       name,
@@ -11,6 +11,7 @@ const getBrandsList = (data) => {
       slug,
       createdAt,
       updatedAt,
+      deleteAt,
     };
   });
 
