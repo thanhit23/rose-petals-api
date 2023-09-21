@@ -3,7 +3,10 @@ const express = require('express');
 const authRoute = require('./auth.route');
 const productRoute = require('./product.route');
 const categoryRoute = require('./category.route');
+const cartRoute = require('./cart.route');
 const brandRoute = require('./brand.route');
+const auth = require('../../middlewares/auth');
+const { roles } = require('../../config/roles');
 
 const router = express.Router();
 
@@ -26,8 +29,19 @@ const defaultRoutes = [
   },
 ];
 
+const privateRoutes = [
+  {
+    path: '/carts',
+    route: cartRoute,
+  },
+];
+
 defaultRoutes.forEach((route) => {
   router.use(route.path, route.route);
+});
+
+privateRoutes.forEach((route) => {
+  router.use(route.path, auth(roles.user), route.route);
 });
 
 module.exports = router;
