@@ -16,6 +16,10 @@ const brandSchema = mongoose.Schema(
     logo: {
       type: String,
     },
+    deleteAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

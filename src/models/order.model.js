@@ -28,6 +28,10 @@ const orderSchema = mongoose.Schema(
       require: true,
       default: 0,
     },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

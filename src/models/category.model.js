@@ -11,6 +11,10 @@ const categorySchema = mongoose.Schema({
     require: true,
     unique: true,
   },
+  deleteAt: {
+    type: Date,
+    default: null,
+  },
 });
 
 // add plugin that converts mongoose to json
