@@ -52,8 +52,8 @@ const queryProducts = async (filter, options) => {
  * @param {string} id - product id
  * @returns Product
  */
-const getProductById = async (id) => {
-  const data = await Product.findById(id);
+const getProductById = async (filter, options) => {
+  const data = await Product.paginate({ ...filter, deletedAt: null }, options);
   return productTransfomer.getProduct(data);
 };
 
