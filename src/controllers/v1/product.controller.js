@@ -17,8 +17,13 @@ const getProducts = catchAsync(async ({ query }, res) => {
 const getProduct = catchAsync(async (req, res) => {
   const {
     params: { productId },
+    query,
   } = req;
-  const product = await productService.getProductById(productId);
+
+  const options = pick(query, ['sortBy', 'limit', 'page']);
+  options.populate = 'brand,category';
+
+  const product = await productService.getProductById({ _id: productId }, options);
   if (!product) return res.resourceNotFound();
   return res.success(product);
 });
