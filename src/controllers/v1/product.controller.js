@@ -20,7 +20,7 @@ const getProduct = catchAsync(async (req, res) => {
     query,
   } = req;
 
-  const options = pick(query, ['sortBy', 'limit', 'page']);
+  const options = pick(query, []);
   options.populate = 'brand,category';
 
   const product = await productService.getProductById({ _id: productId }, options);
