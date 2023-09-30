@@ -12,6 +12,14 @@ const productSchema = mongoose.Schema(
       unique: true,
       require: true,
     },
+    quantity: {
+      type: Number,
+      require: true,
+    },
+    sold: {
+      type: Number,
+      require: true,
+    },
     category: {
       required: true,
       type: mongoose.Schema.Types.ObjectId,
