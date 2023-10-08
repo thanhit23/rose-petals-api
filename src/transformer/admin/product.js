@@ -23,6 +23,7 @@ const getProductList = (data) => {
         _id: brand?._id || null,
       },
       thumbnail: getImageThumbnail(images),
+      images,
       deletedAt,
       createdAt,
       updatedAt,
