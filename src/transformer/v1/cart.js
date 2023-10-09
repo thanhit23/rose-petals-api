@@ -1,3 +1,5 @@
+const { getImageThumbnail } = require('../../utils/app');
+
 const getCarts = (data) => {
   const { results, ...meta } = data;
   const products = results.map((i) => {
@@ -9,8 +11,8 @@ const getCarts = (data) => {
         _id: productId?._id || null,
         name: productId?.name || null,
         slug: productId?.slug || null,
-        images: productId?.images[0] || null,
-        price: productId?.price || null,
+        images: getImageThumbnail(productId?.images[0]) || null,
+        price: productId?.price || null
       },
       deletedAt,
       createdAt,
