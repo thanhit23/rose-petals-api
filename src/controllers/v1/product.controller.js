@@ -1,26 +1,37 @@
+const { first } = require('lodash');
+
 const pick = require('../../utils/pick');
 const catchAsync = require('../../utils/catchAsync');
 const { productService } = require('../../services/app');
 
+const checkSearchCriteriaRange = (query, key) => {
+  const queryString = query;
+
+  if (query[`${key}_min`] >= 0 && query[`${key}_max`]) {
+    queryString[key] = { min: query[`${key}_min`], max: query[`${key}_max`] };
+  }
+
+  return queryString;
+};
+
 const getProducts = catchAsync(async ({ query }, res) => {
-  const filter = pick(query, ['name', 'category', 'brand']);
-  // eslint-disable-next-line no-console
-  console.log(query, 'query');
-  filter.searchCriteria = {
-    name: 'like',
-  };
-  const options = pick(query, ['sortBy', 'limit', 'page']);
+  const queryString = first(['price', 'rating'].map((item) => checkSearchCriteriaRange(query, item)));
+
+  const filter = pick(queryString, ['name', 'category', 'brand', 'price', 'rating']);
+  const options = pick(queryString, ['sortBy', 'limit', 'page']);
+
+  filter.searchCriteria = { name: 'like', price: 'range', rating: 'range' };
   options.populate = 'brand,category';
 
-  if (query.featured) {
+  if (queryString.featured) {
     options.sortBy = 'rating:desc';
   }
 
-  if (query.week_top) {
+  if (queryString.week_top) {
     options.sortBy = 'updatedAt:desc';
   }
 
-  if (query.new_top) {
+  if (queryString.new_top) {
     options.sortBy = 'createdAt:desc';
   }
 

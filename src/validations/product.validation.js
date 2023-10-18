@@ -19,7 +19,10 @@ const createProduct = {
 const getProducts = {
   query: Joi.object().keys({
     name: Joi.string(),
-    price: Joi.number(),
+    price_min: Joi.number().min(0),
+    price_max: Joi.number(),
+    rating_min: Joi.number().min(0),
+    rating_max: Joi.number().max(5),
     sold: Joi.number(),
     brand: Joi.string(),
     featured: Joi.boolean(),
