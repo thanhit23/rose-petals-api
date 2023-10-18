@@ -5,6 +5,18 @@ const { Product, Category, Brand } = require('../../models');
 const ApiError = require('../../utils/ApiError');
 const { productTransfomer } = require('../../transformer/admin');
 
+/**
+ * @param {String} name
+ * @returns {Promise<String>}
+ */
+const generateSlug = async (name) => {
+  const slugOption = { lower: true, strict: true };
+  const slug = slugify(name, { lower: true, strict: true });
+  const isHasSlug = await Product.find({ slug });
+
+  return isHasSlug ? slugify(`${name}-${slug.length}`, slugOption) : slug;
+};
+
 const validateCreateProduct = async ({ category, brand, slug }) => {
   const categoryDetail = await Category.findById(category);
   if (!categoryDetail) {
@@ -29,7 +41,8 @@ const validateCreateProduct = async ({ category, brand, slug }) => {
  */
 const createProduct = async (body) => {
   const { name } = body;
-  const slug = slugify(name, { lower: true });
+  const slug = await generateSlug(name);
+
   return Product.create({ ...body, slug });
 };
 

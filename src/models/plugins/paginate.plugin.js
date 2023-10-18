@@ -34,8 +34,17 @@ const paginate = (schema) => {
     const { searchCriteria = null, ...filter } = search;
     if (searchCriteria) {
       map(filter, (value, key) => {
-        if (searchCriteria[key] && searchCriteria[key] === 'like') {
-          filter[key] = { $regex: value };
+        if (searchCriteria[key]) {
+          let filterIntergrate = {};
+
+          if (searchCriteria[key] === 'like') {
+            filterIntergrate = { ...filterIntergrate, $regex: value, $options: 'i' };
+          }
+          if (searchCriteria[key] === 'range') {
+            filterIntergrate = { ...filterIntergrate, $gte: value.min, $lte: value.max };
+          }
+
+          filter[key] = filterIntergrate;
         }
       });
     }
