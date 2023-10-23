@@ -21,6 +21,10 @@ const cartSchema = mongoose.Schema(
       type: Array,
       require: true,
     },
+    color: {
+      type: String,
+      require: true,
+    },
   },
   {
     timestamps: true,

@@ -6,6 +6,7 @@ const createCart = {
     productId: Joi.string().required(),
     quantity: Joi.number().required(),
     size: Joi.string().required(),
+    color: Joi.string().required(),
   }),
 };
 
@@ -14,6 +15,7 @@ const getCarts = {
     productId: Joi.string().custom(objectId),
     quantity: Joi.number(),
     size: Joi.string(),
+    color: Joi.string(),
   }),
 };
 
