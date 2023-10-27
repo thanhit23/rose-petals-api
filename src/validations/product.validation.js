@@ -26,6 +26,7 @@ const getProducts = {
     sold: Joi.number(),
     brand: Joi.string(),
     featured: Joi.boolean(),
+    best_selling: Joi.boolean(),
     week_top: Joi.boolean(),
     new_top: Joi.boolean(),
     category: Joi.string(),
