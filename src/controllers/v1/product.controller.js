@@ -27,6 +27,10 @@ const getProducts = catchAsync(async ({ query }, res) => {
     options.sortBy = 'rating:desc';
   }
 
+  if (queryString.best_selling) {
+    options.sortBy = 'sold:desc';
+  }
+
   if (queryString.week_top) {
     options.sortBy = 'updatedAt:desc';
   }
