@@ -25,6 +25,18 @@ const getCart = {
   }),
 };
 
+const updateCart = {
+  params: Joi.object().keys({
+    cartId: Joi.required().custom(objectId),
+  }),
+  body: Joi.object()
+    .keys({
+      quantity: Joi.string(),
+    })
+    .min(1)
+    .max(10),
+};
+
 const deleteCart = {
   params: Joi.object().keys({
     cartId: Joi.string().custom(objectId),
@@ -32,6 +44,7 @@ const deleteCart = {
 };
 
 module.exports = {
+  updateCart,
   createCart,
   getCarts,
   getCart,

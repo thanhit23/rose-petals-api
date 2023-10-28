@@ -47,6 +47,21 @@ const getCartById = async (id) => {
 };
 
 /**
+ * Update cart by id
+ * @param {ObjectId} id
+ * @returns {Promise<Cart>}
+ */
+const updateCart = async (id, body) => {
+  const cart = await Cart.findById(id);
+  if (!cart) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Resource not found');
+  }
+  Object.assign(cart, body);
+  await cart.save();
+  return cart;
+};
+
+/**
  * Delete cart by id
  * @param {ObjectId} cartId
  * @returns {Promise<Cart>}
@@ -64,6 +79,7 @@ const deleteCartById = async (cartId) => {
 module.exports = {
   createCart,
   getAllCart,
+  updateCart,
   getCartById,
   deleteCartById,
 };
