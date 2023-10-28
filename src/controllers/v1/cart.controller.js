@@ -24,6 +24,11 @@ const getCart = catchAsync(async (req, res) => {
   return res.success(cart);
 });
 
+const updateCart = catchAsync(async ({ user: { _id }, body }, res) => {
+  const cart = await cartService.updateUserById(_id, body);
+  res.success(cart);
+});
+
 const deleteCart = catchAsync(async ({ params: { cartId } }, res) => {
   await cartService.deleteCartById(cartId);
   res.success(true);
@@ -31,6 +36,7 @@ const deleteCart = catchAsync(async ({ params: { cartId } }, res) => {
 
 module.exports = {
   createCart,
+  updateCart,
   getCarts,
   getCart,
   deleteCart,
