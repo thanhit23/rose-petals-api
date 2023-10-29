@@ -36,6 +36,8 @@ const updateUser = {
     .keys({
       email: Joi.string().email(),
       password: Joi.string().custom(password),
+      currentPassword: Joi.string().custom(password),
+      newPassword: Joi.string().custom(password),
       name: Joi.string(),
       role: Joi.string(),
       isEmailVerified: Joi.bool(),

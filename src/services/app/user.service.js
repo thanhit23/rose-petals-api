@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const httpStatus = require('http-status');
 const { User } = require('../../models');
 const ApiError = require('../../utils/ApiError');
@@ -63,13 +64,24 @@ const getUserByEmailAndRole = async (email, role) => {
  */
 const updateUserById = async (userId, updateBody) => {
   const user = await getUserById(userId);
+
+  const { password = '' } = user;
+
+  const mismatch = await bcrypt.compareSync(updateBody.currentPassword, password);
+
+  if (!mismatch) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Password mismatch');
+  }
+
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Resource not found');
   }
   if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
-  Object.assign(user, updateBody);
+  const body = updateBody.newPassword ? { ...updateBody, password: updateBody.newPassword } : updateBody;
+
+  Object.assign(user, body);
   await user.save();
   return user;
 };
