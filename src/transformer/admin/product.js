@@ -40,15 +40,11 @@ const getProduct = (data) => {
   const { results, ...meta } = data;
 
   const { price, description, _id, name, category, slug, brand, createdAt, updatedAt, deletedAt, images } = results[0];
-  const imagesArr = images.map(i => ({
-    fullUrl: `${baseUrl}/file${i}`,
-    path: i
-  }));
 
   const products = {
     _id,
     price,
-    images: imagesArr,
+    images,
     description,
     name,
     category: {
