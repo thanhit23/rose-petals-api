@@ -39,7 +39,13 @@ const getProducts = catchAsync(async ({ query }, res) => {
     options.sortBy = 'createdAt:desc';
   }
 
-  const result = await productService.queryProducts(filter, options);
+  const dataProduct = await productService.queryProducts(filter, options);
+
+  const result = {
+    ...dataProduct,
+    results: query?.related ? dataProduct.results.filter(({ _id }) => _id != query?.related) : dataProduct.results,
+  }
+
   return res.success(result);
 });
 

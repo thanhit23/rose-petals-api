@@ -30,6 +30,7 @@ const getProducts = {
     week_top: Joi.boolean(),
     new_top: Joi.boolean(),
     category: Joi.string(),
+    related: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
   }),

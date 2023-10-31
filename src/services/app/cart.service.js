@@ -51,12 +51,14 @@ const getCartById = async (id) => {
  * @param {ObjectId} id
  * @returns {Promise<Cart>}
  */
-const updateCart = async (id, body) => {
-  const cart = await Cart.findById(id);
+const updateCart = async (userId, id, body) => {
+  const cart = await Cart.findOne({ userId, _id: id });
+
   if (!cart) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Resource not found');
   }
-  Object.assign(cart, body);
+
+  Object.assign(cart, { ...body, quantity: +body.quantity + cart.quantity });
   await cart.save();
   return cart;
 };

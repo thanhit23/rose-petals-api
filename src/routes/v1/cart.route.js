@@ -13,7 +13,7 @@ router
 router
   .route('/:cartId')
   .get(validate(cartValidation.getCart), cartController.getCart)
-  .put(validate(cartValidation.updateCart), cartController.getCart)
+  .put(validate(cartValidation.updateCart), cartController.updateCart)
   .delete(validate(cartValidation.deleteCart), cartController.deleteCart);
 
 module.exports = router;

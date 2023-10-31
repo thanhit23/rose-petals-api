@@ -24,8 +24,8 @@ const getCart = catchAsync(async (req, res) => {
   return res.success(cart);
 });
 
-const updateCart = catchAsync(async ({ user: { _id }, body }, res) => {
-  const cart = await cartService.updateUserById(_id, body);
+const updateCart = catchAsync(async ({ user: { _id }, params: { cartId }, body }, res) => {
+  const cart = await cartService.updateCart(_id, cartId, body);
   res.success(cart);
 });
 
