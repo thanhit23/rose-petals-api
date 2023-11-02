@@ -2,6 +2,7 @@ const express = require('express');
 
 const authRoute = require('./auth.route');
 const productRoute = require('./product.route');
+const productReviewRoute = require('./productReview.route');
 const categoryRoute = require('./category.route');
 const cartRoute = require('./cart.route');
 const brandRoute = require('./brand.route');
@@ -19,6 +20,10 @@ const defaultRoutes = [
   {
     path: '/products',
     route: productRoute,
+  },
+  {
+    path: '/product-reviews',
+    route: productReviewRoute,
   },
   {
     path: '/categories',
