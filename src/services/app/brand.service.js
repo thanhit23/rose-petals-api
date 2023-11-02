@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const slugify = require('slugify');
 
-const { Brand } = require('../../models');
+const { Brand, Product } = require('../../models');
 const { brandTransfomer } = require('../../transformer/admin');
 const ApiError = require('../../utils/ApiError');
 
@@ -68,6 +68,11 @@ const deleteBrandById = async (brandId) => {
   const brand = await Brand.findById(brandId);
   if (!brand) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Resource not found');
+  }
+  const product = await Product.find({ brand: brandId });
+
+  if (product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Category existing products');
   }
   await brand.remove();
   return brand;
