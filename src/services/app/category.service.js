@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const slugify = require('slugify');
-const { Category } = require('../../models');
+const { Category, Product } = require('../../models');
 const ApiError = require('../../utils/ApiError');
 
 /**
@@ -95,6 +95,11 @@ const deleteCategoryById = async (categoryId) => {
   const category = await getCategoryById(categoryId);
   if (!category) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Resource not found');
+  }
+  const product = await Product.find({ category: categoryId });
+
+  if (product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Category existing products');
   }
   await category.remove();
   return category;
