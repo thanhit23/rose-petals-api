@@ -39,10 +39,11 @@ const getProductList = (data) => {
 const getProduct = (data) => {
   const { results, ...meta } = data;
 
-  const { price, description, _id, name, category, slug, brand, createdAt, updatedAt, deletedAt, images } = results[0];
+  const { price, description, sold, _id, name, category, slug, brand, createdAt, updatedAt, deletedAt, images } = results[0];
 
   const products = {
     _id,
+    sold,
     price,
     images,
     description,

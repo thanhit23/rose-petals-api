@@ -96,7 +96,7 @@ const deleteCategoryById = async (categoryId) => {
   if (!category) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Resource not found');
   }
-  const product = await Product.find({ category: categoryId });
+  const product = await Product.findOne({ category: categoryId });
 
   if (product) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Category existing products');
