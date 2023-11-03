@@ -3,7 +3,6 @@ const { objectId } = require('./custom.validation');
 
 const createReview = {
   body: Joi.object().keys({
-    user: Joi.string().required().custom(objectId),
     product: Joi.string().required().custom(objectId),
     rating: Joi.number().min(0).max(5),
     content: Joi.string(),
