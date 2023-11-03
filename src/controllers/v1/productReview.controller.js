@@ -2,8 +2,8 @@ const pick = require('../../utils/pick');
 const catchAsync = require('../../utils/catchAsync');
 const { productReviewService } = require('../../services/app');
 
-const createReview = catchAsync(async ({ body }, res) => {
-  const ProductReview = await productReviewService.createReview(body);
+const createReview = catchAsync(async ({ user: { _id }, body }, res) => {
+  const ProductReview = await productReviewService.createReview({ ...body, user: { _id } });
   return res.createSuccess(ProductReview);
 });
 

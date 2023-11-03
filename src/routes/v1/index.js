@@ -22,10 +22,6 @@ const defaultRoutes = [
     route: productRoute,
   },
   {
-    path: '/product-reviews',
-    route: productReviewRoute,
-  },
-  {
     path: '/categories',
     route: categoryRoute,
   },
@@ -39,6 +35,10 @@ const privateRoutes = [
   {
     path: '/carts',
     route: cartRoute,
+  },
+  {
+    path: '/product-reviews',
+    route: productReviewRoute,
   },
   {
     path: '/users',
