@@ -69,10 +69,11 @@ const deleteBrandById = async (brandId) => {
   if (!brand) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Resource not found');
   }
-  const product = await Product.find({ brand: brandId });
+
+  const product = await Product.findOne({ brand: brandId });
 
   if (product) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Category existing products');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Brand existing products');
   }
   await brand.remove();
   return brand;
