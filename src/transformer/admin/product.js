@@ -4,7 +4,7 @@ const baseUrl = process.env.APP_URL;
 const getProductList = (data) => {
   const { results, ...meta } = data;
   const products = results.map((i) => {
-    const { price, rating = 0, quantity = 0, sold = 0, description, slug, _id, name, category, brand, createdAt, updatedAt, deletedAt, images } = i.toObject();
+    const { price, size, rating = 0, quantity = 0, sold = 0, description, slug, _id, name, category, brand, createdAt, updatedAt, deletedAt, images } = i.toObject();
     return {
       price,
       description,
@@ -13,6 +13,7 @@ const getProductList = (data) => {
       quantity,
       rating,
       sold,
+      size,
       slug,
       category: {
         name: category?.name || null,
@@ -39,27 +40,31 @@ const getProductList = (data) => {
 const getProduct = (data) => {
   const { results, ...meta } = data;
 
-  const { price, description, sold, _id, name, category, slug, brand, createdAt, updatedAt, deletedAt, images } = results[0];
+  const { price, description, quantity, size, rating, sold, _id, name, category, slug, brand, createdAt, updatedAt, deletedAt, images } = results[0];
 
   const products = {
-    _id,
-    sold,
     price,
-    images,
     description,
+    _id,
     name,
+    quantity,
+    rating,
+    sold,
+    size,
+    slug,
     category: {
-      id: category?.id,
-      name: category?.name,
+      name: category?.name || null,
+      _id: category?._id || null,
     },
     brand: {
-      id: brand?.id,
-      name: brand?.name,
+      name: brand?.name || null,
+      _id: brand?._id || null,
     },
-    slug,
+    thumbnail: getImageThumbnail(images),
+    images,
     deletedAt,
     createdAt,
-    updatedAt
+    updatedAt,
   };
 
   return {
