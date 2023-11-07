@@ -1,31 +1,32 @@
 const { getImageThumbnail } = require('../../utils/app');
 
-const getListOrdersDetailByOrderId = (data) => {
+const getListOrdersDetailByOrderId = (data, totalPrice) => {
   const { results, ...meta } = data;
 
   const orderDetail = results.map((i) => {
-    const { product, discountPercent, shipingFee, quantity, price, order, _id, createdAt, updatedAt } = i.toObject();
+    const { product, quantity, price, _id } = i.toObject();
 
     return {
       _id,
-      order,
       price,
       quantity,
-      discountPercent,
-      shipingFee,
-      totalPrice: price * quantity,
       product: {
         name: product?.name || null,
         _id: product?._id || null,
         thumbnail: getImageThumbnail(product?.images) || null,
       },
-      createdAt,
-      updatedAt,
     };
   });
 
   return {
-    results: orderDetail,
+    results: {
+      products: orderDetail,
+      totalPrice,
+      shipingFee: results[0]?.shipingFee || 0,
+      discountPercent: results[0]?.discountPercent || 0,
+      createdAt: results[0].createdAt,
+      updatedAt: results[0].updatedAt,
+    },
     ...meta,
   };
 };

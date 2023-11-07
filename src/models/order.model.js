@@ -46,6 +46,6 @@ orderSchema.plugin(paginate);
  * @typedef Order
  */
 
-const Order = mongoose.model('Order', orderSchema);
+const Order = mongoose.model('order', orderSchema);
 
 module.exports = Order;
