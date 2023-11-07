@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
+const { isEqual } = require('lodash');
 
-const { OrderDetail } = require('../../models');
+const { OrderDetail, Order } = require('../../models');
 const ApiError = require('../../utils/ApiError');
 const { orderDetailTransfomer } = require('../../transformer/admin');
 
@@ -23,9 +24,15 @@ const createOrderDetail = async (body) => {
  * @param {number} [options.page] - Current page (default = 1)
  * @returns {Promise<ListOrderDetail>}
  */
-const getListOrdersDetailByOrderId = async (orderDetailId, filter, options) => {
-  const data = await OrderDetail.paginate({ order: orderDetailId, ...filter }, options);
-  return orderDetailTransfomer.getListOrdersDetailByOrderId(data);
+const getListOrdersDetailByOrderId = async (user, orderId, filter, options) => {
+  const order = await Order.findOne({ _id: orderId });
+  // eslint-disable-next-line no-console
+  console.log(order, 'order');
+  if (!isEqual(user, order.user)) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Permission denied');
+  }
+  const data = await OrderDetail.paginate({ order: orderId, ...filter }, options);
+  return orderDetailTransfomer.getListOrdersDetailByOrderId(data, order.amount);
 };
 
 /**
@@ -76,10 +83,10 @@ const deleteListOrderDetailById = async (orderId) => {
  * @param {ObjectId} orderId
  * @returns {Promise<OrderDetail>}
  */
-const calculatorAmount = async (orderId) => {
+const calculatorAmount = async (order) => {
   let result = 0;
 
-  const data = await OrderDetail.find({ order: orderId });
+  const data = await OrderDetail.find({ order });
 
   // eslint-disable-next-line no-return-assign
   data.map(({ price, quantity }) => (result += price * quantity));

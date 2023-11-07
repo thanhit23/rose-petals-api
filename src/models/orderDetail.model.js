@@ -40,6 +40,6 @@ orderDetailSchema.plugin(paginate);
  * @typedef OrderDetail
  */
 
-const OrderDetail = mongoose.model('OrderDetail', orderDetailSchema);
+const OrderDetail = mongoose.model('orderDetail', orderDetailSchema);
 
 module.exports = OrderDetail;
