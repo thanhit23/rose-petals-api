@@ -1,3 +1,6 @@
+const httpStatus = require('http-status');
+
+const ApiError = require('../../utils/ApiError');
 const pick = require('../../utils/pick');
 const catchAsync = require('../../utils/catchAsync');
 const { productReviewService } = require('../../services/app');
@@ -7,11 +10,19 @@ const createReview = catchAsync(async ({ user: { _id }, body }, res) => {
   return res.createSuccess(ProductReview);
 });
 
-const getReviews = catchAsync(async ({ query }, res) => {
+const getReviews = catchAsync(async (req, res) => {
+  const { query } = req;
   const filter = pick(query, ['user', 'product']);
   filter.searchCriteria = {
     name: 'like',
   };
+
+  if (filter.user) {
+    if (!req.user) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate');
+    }
+  }
+
   const options = pick(query, ['sortBy', 'limit', 'page']);
   options.populate = 'user,product';
 

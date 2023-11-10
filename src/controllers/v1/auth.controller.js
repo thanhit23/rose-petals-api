@@ -1,6 +1,10 @@
+const httpStatus = require('http-status');
+
 const catchAsync = require('../../utils/catchAsync');
 const { roles } = require('../../config/roles');
+const { User } = require('../../models');
 const { authService, userService, tokenService, emailService } = require('../../services/app');
+const ApiError = require('../../utils/ApiError');
 
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -31,8 +35,8 @@ const refreshTokens = catchAsync(async (req, res) => {
 
 const forgotPassword = catchAsync(async (req, res) => {
   const resetPasswordToken = await tokenService.generateResetPasswordToken(req.body.email);
-  await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
-  res.noContent();
+  const email = await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
+  res.success(email);
 });
 
 const resetPassword = catchAsync(async (req, res) => {
@@ -41,9 +45,19 @@ const resetPassword = catchAsync(async (req, res) => {
 });
 
 const sendVerificationEmail = catchAsync(async (req, res) => {
-  const verifyEmailToken = await tokenService.generateVerifyEmailToken(req.user);
-  await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
-  res.noContent();
+  const email = await User.findOne({ email: req.body.email });
+  if (email) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already exists');
+  }
+  const verifyEmailToken = await tokenService.generateVerifyEmailToken();
+
+  await emailService.sendVerificationEmail(req.body.email, verifyEmailToken);
+  res.success(verifyEmailToken);
+});
+
+const sendVerificationCode = catchAsync(async ({ body: { token, code } }, res) => {
+  const verifyCode = await tokenService.verifyCode(token, code);
+  res.success({ verifyCode });
 });
 
 const verifyEmail = catchAsync(async (req, res) => {
@@ -61,4 +75,5 @@ module.exports = {
   resetPassword,
   sendVerificationEmail,
   verifyEmail,
+  sendVerificationCode,
 };

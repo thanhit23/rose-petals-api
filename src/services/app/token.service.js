@@ -31,16 +31,16 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
  * @param {ObjectId} userId
  * @param {Moment} expires
  * @param {string} type
- * @param {boolean} [blacklisted]
  * @returns {Promise<Token>}
  */
-const saveToken = async (token, userId, expires, type, blacklisted = false) => {
+const saveToken = async (token, expires, code, type, user) => {
   const tokenDoc = await Token.create({
     token,
-    user: userId,
     expires: expires.toDate(),
     type,
-    blacklisted,
+    code,
+    blacklisted: false,
+    ...user,
   });
   return tokenDoc;
 };
@@ -71,7 +71,7 @@ const generateAuthTokens = async (user) => {
 
   const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
   const refreshToken = generateToken(user.id, refreshTokenExpires, tokenTypes.REFRESH);
-  await saveToken(refreshToken, user.id, refreshTokenExpires, tokenTypes.REFRESH);
+  await saveToken(refreshToken, refreshTokenExpires, 0, tokenTypes.REFRESH, { user: user.id });
 
   return {
     access: {
@@ -97,7 +97,7 @@ const generateResetPasswordToken = async (email) => {
   }
   const expires = moment().add(config.jwt.resetPasswordExpirationMinutes, 'minutes');
   const resetPasswordToken = generateToken(user.id, expires, tokenTypes.RESET_PASSWORD);
-  await saveToken(resetPasswordToken, user.id, expires, tokenTypes.RESET_PASSWORD);
+  await saveToken(resetPasswordToken, expires, 0, tokenTypes.RESET_PASSWORD, { user: user.id });
   return resetPasswordToken;
 };
 
@@ -106,11 +106,23 @@ const generateResetPasswordToken = async (email) => {
  * @param {User} user
  * @returns {Promise<string>}
  */
-const generateVerifyEmailToken = async (user) => {
+const generateVerifyEmailToken = async () => {
   const expires = moment().add(config.jwt.verifyEmailExpirationMinutes, 'minutes');
-  const verifyEmailToken = generateToken(user.id, expires, tokenTypes.VERIFY_EMAIL);
-  await saveToken(verifyEmailToken, user.id, expires, tokenTypes.VERIFY_EMAIL);
-  return verifyEmailToken;
+  const verifyEmailToken = generateToken('id_user', expires, tokenTypes.CODE);
+  const code = Number(Math.floor(Math.random() * (1000001 - 100000)) + 100000);
+
+  await saveToken(verifyEmailToken, expires, code, tokenTypes.CODE);
+  return { verifyEmailToken, code };
+};
+
+/**
+ * Generate verify email token
+ * @param {Number} code
+ * @returns {Promise<number>}
+ */
+const verifyCode = async (token, code) => {
+  const codes = await Token.findOne({ token, code });
+  return codes;
 };
 
 module.exports = {
@@ -119,5 +131,6 @@ module.exports = {
   verifyToken,
   generateAuthTokens,
   generateResetPasswordToken,
+  verifyCode,
   generateVerifyEmailToken,
 };
