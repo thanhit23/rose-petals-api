@@ -2,19 +2,37 @@ const express = require('express');
 const validate = require('../../middlewares/validate');
 const { productReviewValidation } = require('../../validations');
 const { productReviewController } = require('../../controllers/v1');
+const auth = require('../../middlewares/auth');
+const { roles } = require('../../config/roles');
 
 const router = express.Router();
-router
+const routers = express.Router();
+
+const decentralizePermissionsByQuery = async (req, res, next) => {
+  const { query } = req;
+
+  if (query.user) {
+    auth(roles.user);
+  }
+
+  next();
+};
+
+routers
   .route('/')
-  .post(validate(productReviewValidation.createReview), productReviewController.createReview)
-  .get(validate(productReviewValidation.getReviews), productReviewController.getReviews);
+  .get(validate(productReviewValidation.getReviews), decentralizePermissionsByQuery, productReviewController.getReviews);
+
+router.route('/').post(validate(productReviewValidation.createReview), productReviewController.createReview);
 
 router
   .route(`/:productReviewId`)
   .put(validate(productReviewValidation.updateReview), productReviewController.updateReview)
   .delete(validate(productReviewValidation.deleteReview), productReviewController.deleteReview);
 
-module.exports = router;
+module.exports = {
+  router,
+  routers,
+};
 
 /**
  * @swagger

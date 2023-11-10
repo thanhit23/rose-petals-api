@@ -28,6 +28,19 @@ const refreshTokens = {
   }),
 };
 
+const verificationEmail = {
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+  }),
+};
+
+const verificationCode = {
+  body: Joi.object().keys({
+    token: Joi.string().required(),
+    code: Joi.number().required(),
+  }),
+};
+
 const forgotPassword = {
   body: Joi.object().keys({
     email: Joi.string().email().required(),
@@ -50,6 +63,8 @@ const verifyEmail = {
 };
 
 module.exports = {
+  verificationEmail,
+  verificationCode,
   register,
   login,
   logout,

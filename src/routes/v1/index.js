@@ -2,7 +2,7 @@ const express = require('express');
 
 const authRoute = require('./auth.route');
 const productRoute = require('./product.route');
-const productReviewRoute = require('./productReview.route');
+const { router: productReviewRoute, routers: productReviewes } = require('./productReview.route');
 const categoryRoute = require('./category.route');
 const cartRoute = require('./cart.route');
 const orderRoute = require('./order.route');
@@ -30,6 +30,10 @@ const defaultRoutes = [
     path: '/brands',
     route: brandRoute,
   },
+  {
+    path: '/product/reviews',
+    route: productReviewes,
+  },
 ];
 
 const privateRoutes = [
@@ -42,7 +46,7 @@ const privateRoutes = [
     route: cartRoute,
   },
   {
-    path: '/product-reviews',
+    path: '/product-review',
     route: productReviewRoute,
   },
   {
