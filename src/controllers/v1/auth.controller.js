@@ -57,6 +57,9 @@ const sendVerificationEmail = catchAsync(async (req, res) => {
 
 const sendVerificationCode = catchAsync(async ({ body: { token, code } }, res) => {
   const verifyCode = await tokenService.verifyCode(token, code);
+  if (!verifyCode) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invalid code');
+  }
   res.success({ verifyCode });
 });
 
