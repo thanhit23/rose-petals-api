@@ -12,6 +12,14 @@ const orderSchema = mongoose.Schema(
       type: String,
       require: true,
     },
+    phoneNumber: {
+      type: Number,
+      require: true,
+    },
+    fullName: {
+      type: String,
+      require: true,
+    },
     customerNote: {
       type: String,
     },
