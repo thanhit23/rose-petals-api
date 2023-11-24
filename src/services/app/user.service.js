@@ -62,23 +62,28 @@ const getUserByEmailAndRole = async (email, role) => {
  * @param {Object} updateBody
  * @returns {Promise<User>}
  */
-const updateUserById = async (userId, updateBody) => {
+const updateUserById = async (userId, updateBody, resetPassword = false) => {
   const user = await getUserById(userId);
-
   const { password = '' } = user;
 
-  const mismatch = await bcrypt.compareSync(updateBody.currentPassword, password);
+  if (!resetPassword) {
+    const mismatch = await bcrypt.compareSync(updateBody.currentPassword, password);
 
-  if (!mismatch) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Password mismatch');
+    if (!mismatch) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Password mismatch');
+    }
   }
 
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Resource not found');
   }
-  if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
+
+  const emailtoken = await User.isEmailTaken(updateBody.email, userId);
+
+  if (updateBody.email && emailtoken) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
+
   const body = updateBody.newPassword ? { ...updateBody, password: updateBody.newPassword } : updateBody;
 
   Object.assign(user, body);

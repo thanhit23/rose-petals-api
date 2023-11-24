@@ -31,7 +31,7 @@ const sendEmail = async (to, subject, options) => {
  */
 const sendResetPasswordEmail = async (to, token) => {
   const subject = 'Reset password';
-  const resetPasswordUrl = `https://rose-petals.vercel.app/reset-password?token=${token.token}`;
+  const resetPasswordUrl = `https://rose-petals.vercel.app/auth/reset-password?token=${token.token}`;
 
   const html = `<!DOCTYPE html>
   <html lang="en">
