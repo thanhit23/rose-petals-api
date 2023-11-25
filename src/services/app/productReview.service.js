@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 
 const { ProductReview } = require('../../models');
+const Product = require('./product.service');
 const ApiError = require('../../utils/ApiError');
 const { reviewTransfomer } = require('../../transformer/admin');
 
@@ -10,6 +11,18 @@ const { reviewTransfomer } = require('../../transformer/admin');
  * @returns {Promise<Review>}
  */
 const createReview = async (body) => {
+  let totalRating = 0;
+  const productReview = await ProductReview.find({ product: body.product });
+
+  if (productReview.length) {
+    productReview.map(({ rating }) => {
+      totalRating += rating;
+      return null;
+    });
+  }
+
+  await Product.updateProduct(body.product, { rating: totalRating / productReview.length });
+
   return ProductReview.create(body);
 };
 
