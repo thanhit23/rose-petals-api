@@ -19,7 +19,7 @@ router
 router.route('/detail').post(validate(orderDetailValidation.createOrder), orderDetailController.createOrder);
 
 router
-  .route(`/:orderId/detail/:orderDetailId`)
+  .route(`/:orderId/detail`)
   .get(validate(orderDetailValidation.getOrders), orderDetailController.getListOrderByOrderId)
   .put(validate(orderDetailValidation.updateOrder), orderDetailController.updateOrder)
   .delete(validate(orderDetailValidation.deleteOrder), orderDetailController.deleteOrder);

@@ -3,7 +3,7 @@ const catchAsync = require('../../utils/catchAsync');
 const { orderService, orderDetailService } = require('../../services/app');
 
 const createOrder = catchAsync(async ({ user, body }, res) => {
-  const order = await orderService.createOrder({ ...body, user: user._id });
+  const order = await orderService.createOrder({ ...body, amount: body.amount, user: user._id });
   return res.createSuccess(order);
 });
 

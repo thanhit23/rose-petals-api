@@ -17,7 +17,7 @@ const createOrder = catchAsync(async ({ body }, res) => {
   return res.createSuccess(true);
 });
 
-const getListOrderByOrderId = catchAsync(async ({ user: { _id: userId }, query, params: { orderDetailId } }, res) => {
+const getListOrderByOrderId = catchAsync(async ({ user: { _id: userId }, query, params: { orderId } }, res) => {
   const filter = pick(query, ['order']);
 
   filter.searchCriteria = {
@@ -28,7 +28,7 @@ const getListOrderByOrderId = catchAsync(async ({ user: { _id: userId }, query, 
 
   options.populate = 'product';
 
-  const result = await orderDetailService.getListOrdersDetailByOrderId(userId, orderDetailId, filter, options);
+  const result = await orderDetailService.getListOrdersDetailByOrderId(userId, orderId, filter, options);
 
   return res.success(result);
 });
