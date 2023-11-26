@@ -17,7 +17,7 @@ const createOrder = catchAsync(async ({ body }, res) => {
   return res.createSuccess(true);
 });
 
-const getListOrderByOrderId = catchAsync(async ({ user: { _id: userId }, query, params: { orderDetailId } }, res) => {
+const getListOrderByOrderId = catchAsync(async ({ user: { _id: userId }, query, params: { orderId } }, res) => {
   const filter = pick(query, ['order']);
 
   filter.searchCriteria = {
@@ -28,7 +28,7 @@ const getListOrderByOrderId = catchAsync(async ({ user: { _id: userId }, query, 
 
   options.populate = 'product';
 
-  const result = await orderDetailService.getListOrdersDetailByOrderId(userId, orderDetailId, filter, options);
+  const result = await orderDetailService.getListOrdersDetailByOrderId(userId, orderId, filter, options);
 
   return res.success(result);
 });
@@ -43,8 +43,8 @@ const updateOrder = catchAsync(async ({ params: { orderId, orderDetailId }, body
   res.success(orderDetail);
 });
 
-const deleteOrder = catchAsync(async ({ params: { orderId, orderDetailId } }, res) => {
-  await orderDetailService.deleteOrderDetailById(orderDetailId);
+const deleteOrder = catchAsync(async ({ params: { orderId } }, res) => {
+  await orderDetailService.deleteOrderDetailById(orderId);
 
   const amount = await orderDetailService.calculatorAmount(orderId);
 

@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const { isEqual } = require('lodash');
 
-const { OrderDetail, Order } = require('../../models');
+const { OrderDetail, Order, Cart } = require('../../models');
 const ApiError = require('../../utils/ApiError');
 const { orderDetailTransfomer } = require('../../transformer/admin');
 
@@ -12,6 +12,14 @@ const { orderDetailTransfomer } = require('../../transformer/admin');
  */
 const createOrderDetail = async (body) => {
   return OrderDetail.create(body);
+};
+
+const integrateCartProduct = (cart, data) => {
+  return data.results.map(({ product, ...orders }) => {
+    const productCart = cart.find(({ productId }) =>  String(productId) === String(product._id));
+
+    return { product, size: productCart?.size || [] , ...orders._doc };
+  });
 };
 
 /**
@@ -26,13 +34,17 @@ const createOrderDetail = async (body) => {
  */
 const getListOrdersDetailByOrderId = async (user, orderId, filter, options) => {
   const order = await Order.findOne({ _id: orderId });
-  // eslint-disable-next-line no-console
-  console.log(order, 'order');
+  const cart = await Cart.find({ userId: user });
+
   if (!isEqual(user, order.user)) {
     throw new ApiError(httpStatus.FORBIDDEN, 'Permission denied');
   }
+
   const data = await OrderDetail.paginate({ order: orderId, ...filter }, options);
-  return orderDetailTransfomer.getListOrdersDetailByOrderId(data, order.amount);
+
+  const result = await integrateCartProduct(cart, data);
+
+  return orderDetailTransfomer.getListOrdersDetailByOrderId({ ...data, results: result }, order);
 };
 
 /**
@@ -62,20 +74,9 @@ const deleteOrderDetailById = async (orderId) => {
  * @returns {Promise<OrderDetail>}
  */
 const deleteListOrderDetailById = async (orderId) => {
-  const data = await OrderDetail.find({ order: orderId });
-  let orderDetail;
+  const order = await OrderDetail.remove({ order: { $in: orderId } });
 
-  data.map(async ({ _id }) => {
-    orderDetail = await getOrderDetailById(_id);
-
-    if (!orderDetail) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Resource not found');
-    }
-
-    await orderDetail.remove();
-  });
-
-  return orderDetail;
+  return order;
 };
 
 /**

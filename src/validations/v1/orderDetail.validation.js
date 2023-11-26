@@ -11,8 +11,8 @@ const createOrder = {
         price: Joi.number().required(),
       }),
     order: Joi.string().required().custom(objectId),
-    discountPercent: Joi.number(),
-    shipingFee: Joi.number(),
+    discountPercent: Joi.number().required().default(0),
+    shipingFee: Joi.number().required().default(0),
   }),
 };
 
@@ -26,7 +26,6 @@ const getOrders = {
 const updateOrder = {
   params: Joi.object().keys({
     orderId: Joi.required().custom(objectId),
-    orderDetailId: Joi.required().custom(objectId),
   }),
   body: Joi.object()
     .keys({
@@ -41,7 +40,6 @@ const updateOrder = {
 const deleteOrder = {
   params: Joi.object().keys({
     orderId: Joi.string().custom(objectId),
-    orderDetailId: Joi.string().custom(objectId),
   }),
 };
 

@@ -1,10 +1,12 @@
+const { find } = require('lodash');
+
 const { getImageThumbnail } = require('../../utils/app');
 
-const getListOrdersDetailByOrderId = (data, totalPrice) => {
+const getListOrdersDetailByOrderId = (data, order) => {
   const { results, ...meta } = data;
 
   const orderDetail = results.map((i) => {
-    const { product, quantity, price, _id } = i.toObject();
+    const { product, quantity, price, _id, size = [] } = i;
 
     return {
       _id,
@@ -13,6 +15,7 @@ const getListOrdersDetailByOrderId = (data, totalPrice) => {
       product: {
         name: product?.name || null,
         _id: product?._id || null,
+        size,
         thumbnail: getImageThumbnail(product?.images) || null,
       },
     };
@@ -21,7 +24,9 @@ const getListOrdersDetailByOrderId = (data, totalPrice) => {
   return {
     results: {
       products: orderDetail,
-      totalPrice,
+      address: order.address,
+      totalPrice: order.amount,
+      status: order.status,
       shipingFee: results[0]?.shipingFee || 0,
       discountPercent: results[0]?.discountPercent || 0,
       createdAt: results[0].createdAt,
