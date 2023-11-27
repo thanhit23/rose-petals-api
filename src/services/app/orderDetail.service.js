@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { isEqual } = require('lodash');
+const { isEqual, isEmpty } = require('lodash');
 
 const { OrderDetail, Order, Cart } = require('../../models');
 const ApiError = require('../../utils/ApiError');
@@ -35,6 +35,8 @@ const integrateCartProduct = (cart, data) => {
 const getListOrdersDetailByOrderId = async (user, orderId, filter, options) => {
   const order = await Order.findOne({ _id: orderId });
   const cart = await Cart.find({ userId: user });
+
+  console.log(order, 'user');
 
   if (!isEqual(user, order.user)) {
     throw new ApiError(httpStatus.FORBIDDEN, 'Permission denied');
@@ -84,13 +86,22 @@ const deleteListOrderDetailById = async (orderId) => {
  * @param {ObjectId} orderId
  * @returns {Promise<OrderDetail>}
  */
-const calculatorAmount = async (order) => {
+const calculatorAmount = async (order, products) => {
   let result = 0;
 
   const data = await OrderDetail.find({ order });
 
-  // eslint-disable-next-line no-return-assign
-  data.map(({ price, quantity }) => (result += price * quantity));
+  if (isEmpty(data) && !isEmpty(products)) {
+    await products.map(({ price, quantity }) => {
+      result += price * quantity
+    })
+
+    return result;
+  }
+
+  await data.map(({ price, quantity }) => {
+    result += price * quantity
+  });
 
   return result;
 };
