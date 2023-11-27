@@ -10,7 +10,7 @@ const createOrder = catchAsync(async ({ body }, res) => {
 
   const { order } = body;
 
-  const amount = await orderDetailService.calculatorAmount(order);
+  const amount = await orderDetailService.calculatorAmount(order, products);
 
   await orderService.updateOrderById(order, { amount });
 
@@ -44,7 +44,7 @@ const updateOrder = catchAsync(async ({ params: { orderId, orderDetailId }, body
 });
 
 const deleteOrder = catchAsync(async ({ params: { orderId } }, res) => {
-  await orderDetailService.deleteOrderDetailById(orderId);
+  await orderDetailService.deleteListOrderDetailById(orderId);
 
   const amount = await orderDetailService.calculatorAmount(orderId);
 
