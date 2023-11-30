@@ -8,6 +8,7 @@ const cartRoute = require('./cart.route');
 const orderRoute = require('./order.route');
 const brandRoute = require('./brand.route');
 const userRoute = require('./user.route');
+const paymentRoute = require('./payment.route');
 const auth = require('../../middlewares/auth');
 const { roles } = require('../../config/roles');
 
@@ -52,6 +53,10 @@ const privateRoutes = [
   {
     path: '/users',
     route: userRoute,
+  },
+  {
+    path: '/payment',
+    route: paymentRoute,
   },
 ];
 
