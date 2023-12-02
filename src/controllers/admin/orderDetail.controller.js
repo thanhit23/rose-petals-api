@@ -1,6 +1,7 @@
 const pick = require('../../utils/pick');
 const catchAsync = require('../../utils/catchAsync');
-const { orderDetailService, orderService } = require('../../services/app');
+const { orderService } = require('../../services/app');
+const { orderDetailService } = require('../../services/admin');
 
 const createOrder = catchAsync(async ({ body }, res) => {
   const orderDetail = await orderDetailService.createOrderDetail(body);
@@ -15,10 +16,10 @@ const createOrder = catchAsync(async ({ body }, res) => {
 });
 
 const getListOrderByOrderId = catchAsync(async ({ query, params: { orderDetailId } }, res) => {
-  const filter = pick(query, ['order']);
+  const filter = pick(query, ['order', 'fullName']);
 
   filter.searchCriteria = {
-    name: 'like',
+    fullName: 'like',
   };
 
   const options = pick(query, ['sortBy', 'limit', 'page']);
