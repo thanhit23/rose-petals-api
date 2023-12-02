@@ -59,7 +59,9 @@ const getProduct = catchAsync(async (req, res) => {
   options.populate = 'brand,category';
 
   const product = await productService.getProductById({ _id: productId }, options);
+  
   if (!product) return res.resourceNotFound();
+
   return res.success(product);
 });
 

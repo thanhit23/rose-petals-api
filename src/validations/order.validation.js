@@ -9,6 +9,7 @@ const createOrder = {
     amount: Joi.number().required(),
     quantity: Joi.number().required(),
     status: Joi.number().required(),
+    methodPayment: Joi.string(),
   }),
 };
 

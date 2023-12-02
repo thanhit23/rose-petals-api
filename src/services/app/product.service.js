@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const slugify = require('slugify');
 
-const { Product, Category, Brand } = require('../../models');
+const { Product, Category, Brand, ProductReview } = require('../../models');
 const ApiError = require('../../utils/ApiError');
 const { productTransfomer } = require('../../transformer/admin');
 
@@ -67,7 +67,8 @@ const queryProducts = async (filter, options) => {
  */
 const getProductById = async (filter, options) => {
   const data = await Product.paginate({ ...filter, deletedAt: null }, options);
-  return productTransfomer.getProduct(data);
+  const comment = await ProductReview.find({ id: data.id });
+  return productTransfomer.getProduct(data, comment.length);
 };
 
 /**
