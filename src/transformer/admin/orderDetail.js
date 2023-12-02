@@ -30,6 +30,7 @@ const getListOrdersDetailByOrderId = (data, order) => {
       products: orderDetail,
       address: order.address,
       subtotal: order.amount,
+      customerNote: order.customerNote,
       totalPrice,
       status: order.status,
       customNote: order.customNote,

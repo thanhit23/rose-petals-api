@@ -37,7 +37,7 @@ const getProductList = (data) => {
   };
 };
 
-const getProduct = (data) => {
+const getProduct = (data, totalComment = 0) => {
   const { results, ...meta } = data;
 
   const { price, description, quantity, size, rating, sold, _id, name, category, slug, brand, createdAt, updatedAt, deletedAt, images } = results[0];
@@ -51,6 +51,7 @@ const getProduct = (data) => {
     rating,
     sold,
     size,
+    totalComment,
     slug,
     category: {
       name: category?.name || null,

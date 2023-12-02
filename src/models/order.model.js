@@ -22,6 +22,7 @@ const orderSchema = mongoose.Schema(
     },
     customerNote: {
       type: String,
+      default: '',
     },
     amount: {
       type: Number,
@@ -39,6 +40,7 @@ const orderSchema = mongoose.Schema(
     methodPayment: {
       type: String,
       require: true,
+      default: '',
     },
     deletedAt: {
       type: Date,
