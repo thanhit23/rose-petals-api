@@ -11,8 +11,8 @@
   "rules": {
     "no-console": "error",
     "func-names": "off",
-    "no-return-await": "off",
     "no-underscore-dangle": "off",
+    "no-return-await": "off",
     "consistent-return": "off",
     "jest/expect-expect": "off",
     "security/detect-object-injection": "off"

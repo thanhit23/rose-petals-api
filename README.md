@@ -175,7 +175,6 @@ Controllers should try to catch the errors and forward them to the error handlin
 const catchAsync = require('../utils/catchAsync');
 
 const controller = catchAsync(async (req, res) => {
-  // this error will be forwarded to the error handling middleware
   throw new Error('Something wrong happened');
 });
 ```

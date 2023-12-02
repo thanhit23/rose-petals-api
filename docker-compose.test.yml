@@ -1,4 +1,5 @@
 version: '3'
+# Version 3.0.0
 
 services:
   node-app:
