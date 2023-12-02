@@ -1,7 +1,7 @@
 const getOrders = (data) => {
   const { results, ...meta } = data;
   const orders = results.map((i) => {
-    const { user, customerNote, phoneNumber, fullName, address, amount, quantity, status, _id, createdAt, updatedAt, deleteAt } = i.toObject();
+    const { user, customerNote, methodPayment = '', phoneNumber, fullName, address, amount, quantity, status, _id, createdAt, updatedAt, deleteAt } = i.toObject();
     return {
       _id,
       user: {
@@ -11,6 +11,7 @@ const getOrders = (data) => {
       phoneNumber,
       fullName,
       customerNote,
+      methodPayment,
       address,
       amount,
       quantity,
@@ -28,7 +29,7 @@ const getOrders = (data) => {
 };
 
 const getOrder = (data) => {
-  const { user, customerNote, phoneNumber, fullName, address, amount, quantity, status, _id, createdAt, updatedAt } = data;
+  const { user, customerNote, methodPayment = '', phoneNumber, fullName, address, amount, quantity, status, _id, createdAt, updatedAt } = data;
   return {
     _id,
     user: {
@@ -38,6 +39,7 @@ const getOrder = (data) => {
     customerNote,
     phoneNumber,
     fullName,
+    methodPayment,
     address,
     amount,
     quantity,

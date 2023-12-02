@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
-const { isEqual, isEmpty } = require('lodash');
+const { isEmpty } = require('lodash');
 
-const { OrderDetail, Order, Cart } = require('../../models');
+const { OrderDetail, Order } = require('../../models');
 const ApiError = require('../../utils/ApiError');
 const { orderDetailTransfomer } = require('../../transformer/admin');
 
@@ -14,14 +14,6 @@ const createOrderDetail = async (body) => {
   return OrderDetail.create(body);
 };
 
-const integrateCartProduct = (cart, data) => {
-  return data.results.map(({ product, ...orders }) => {
-    const productCart = cart.find(({ productId }) =>  String(productId) === String(product._id));
-
-    return { product, size: productCart?.size || [] , ...orders._doc };
-  });
-};
-
 /**
  * Get order detail by Id
  * @param id
@@ -32,19 +24,12 @@ const integrateCartProduct = (cart, data) => {
  * @param {number} [options.page] - Current page (default = 1)
  * @returns {Promise<ListOrderDetail>}
  */
-const getListOrdersDetailByOrderId = async (user, orderId, filter, options) => {
+const getListOrdersDetailByOrderId = async (orderId, filter, options) => {
   const order = await Order.findOne({ _id: orderId });
-  const cart = await Cart.find({ userId: user });
-
-  if (!isEqual(user, order.user)) {
-    throw new ApiError(httpStatus.FORBIDDEN, 'Permission denied');
-  }
 
   const data = await OrderDetail.paginate({ order: orderId, ...filter }, options);
 
-  const result = await integrateCartProduct(cart, data);
-
-  return orderDetailTransfomer.getListOrdersDetailByOrderId({ ...data, results: result }, order);
+  return orderDetailTransfomer.getListOrdersDetailByOrderId(data, order);
 };
 
 /**
@@ -90,15 +75,16 @@ const calculatorAmount = async (order, products) => {
   const data = await OrderDetail.find({ order });
 
   if (isEmpty(data) && !isEmpty(products)) {
+    // eslint-disable-next-line array-callback-return
     await products.map(({ price, quantity }) => {
-      result += price * quantity
-    })
+      result += price * quantity;
+    });
 
     return result;
   }
-
+  // eslint-disable-next-line array-callback-return
   await data.map(({ price, quantity }) => {
-    result += price * quantity
+    result += price * quantity;
   });
 
   return result;
@@ -120,8 +106,8 @@ const updateOrderDetailById = async (orderId, updateBody) => {
 };
 
 module.exports = {
-  calculatorAmount,
   createOrderDetail,
+  calculatorAmount,
   getListOrdersDetailByOrderId,
   deleteListOrderDetailById,
   deleteOrderDetailById,

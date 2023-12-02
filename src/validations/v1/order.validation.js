@@ -9,6 +9,7 @@ const createOrder = {
     customerNote: Joi.string().allow(null).allow(''),
     amount: Joi.number().required(),
     quantity: Joi.number().required(),
+    methodPayment: Joi.string().required(),
     status: Joi.number().required(),
   }),
 };
@@ -36,6 +37,7 @@ const updateOrder = {
       customerNote: Joi.string(),
       amount: Joi.number().required(),
       quantity: Joi.number().required(),
+      methodPayment: Joi.number().required(),
       status: Joi.number().required(),
     })
     .min(1),
