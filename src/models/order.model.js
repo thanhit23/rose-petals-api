@@ -39,7 +39,6 @@ const orderSchema = mongoose.Schema(
     },
     methodPayment: {
       type: String,
-      require: true,
       default: '',
     },
     deletedAt: {

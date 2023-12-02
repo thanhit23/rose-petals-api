@@ -1,4 +1,5 @@
 const moment = require('moment');
+
 const config = require('../../src/config/config');
 const { tokenTypes } = require('../../src/config/tokens');
 const tokenService = require('../../src/services/app/token.service');
