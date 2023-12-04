@@ -52,7 +52,7 @@ const createpayment = catchAsync(async (req, res) => {
     req.connection.socket.remoteAddress;
 
   let vnpUrl = VNP.URL;
-  const returnUrl = `${VNP.RETURN_URL}?userId=${req.body.userId}`;
+  const returnUrl = `${VNP.RETURN_URL}/order/${orderId}?userId=${_id}`;
   const bankCode = req.body.bankCode || 'NCB';
 
   const vnpParams = {
