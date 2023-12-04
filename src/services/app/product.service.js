@@ -4,6 +4,7 @@ const slugify = require('slugify');
 const { Product, Category, Brand, ProductReview } = require('../../models');
 const ApiError = require('../../utils/ApiError');
 const { productTransfomer } = require('../../transformer/admin');
+const { first } = require('lodash');
 
 /**
  * @param {String} name
@@ -67,7 +68,9 @@ const queryProducts = async (filter, options) => {
  */
 const getProductById = async (filter, options) => {
   const data = await Product.paginate({ ...filter, deletedAt: null }, options);
-  const comment = await ProductReview.find({ product: data.results._id });
+
+  const comment = await ProductReview.find({ product: first(data.results)._id });
+
   return productTransfomer.getProduct(data, comment.length);
 };
 

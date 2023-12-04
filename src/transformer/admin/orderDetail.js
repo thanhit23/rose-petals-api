@@ -31,6 +31,8 @@ const getListOrdersDetailByOrderId = (data, order) => {
       address: order.address,
       subtotal: order.amount,
       customerNote: order.customerNote,
+      methodPayment: order.methodPayment,
+      phoneNumber: order.phoneNumber,
       totalPrice,
       status: order.status,
       customNote: order.customNote,
