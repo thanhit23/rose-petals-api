@@ -67,7 +67,7 @@ const queryProducts = async (filter, options) => {
  */
 const getProductById = async (filter, options) => {
   const data = await Product.paginate({ ...filter, deletedAt: null }, options);
-  const comment = await ProductReview.find({ product: data._id });
+  const comment = await ProductReview.find({ product: data.results._id });
   return productTransfomer.getProduct(data, comment.length);
 };
 
