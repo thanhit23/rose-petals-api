@@ -14,7 +14,7 @@ const productReviewSchema = mongoose.Schema(
       require: true,
     },
     rating: {
-      type: Number,
+      type: mongoose.Schema.Types.Number,
       require: true,
     },
     content: {

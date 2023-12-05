@@ -20,7 +20,11 @@ const decentralizePermissionsByQuery = async (req, res, next) => {
 
 routers
   .route('/')
-  .get(validate(productReviewValidation.getReviews), decentralizePermissionsByQuery, productReviewController.getReviews);
+  .get(
+    validate(productReviewValidation.getReviews),
+    decentralizePermissionsByQuery,
+    productReviewController.getReviews
+  );
 
 router.route('/').post(validate(productReviewValidation.createReview), productReviewController.createReview);
 
