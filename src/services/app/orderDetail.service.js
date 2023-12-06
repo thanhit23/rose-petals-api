@@ -15,6 +15,7 @@ const createOrderDetail = async (body) => {
 };
 
 const integrateCartProduct = (cart, data) => {
+  console.log(data.results, 'data.results');
   return data.results.map(({ product, ...orders }) => {
     const productCart = cart.find(({ productId }) =>  String(productId) === String(product._id));
 
