@@ -11,19 +11,20 @@ const { reviewTransfomer } = require('../../transformer/admin');
  * @returns {Promise<Review>}
  */
 const createReview = async (body) => {
+  await ProductReview.create(body);
+
   let totalRating = 0;
+  let avgRating = 0;
   const productReview = await ProductReview.find({ product: body.product });
 
   if (productReview.length) {
-    productReview.map(({ rating }) => {
+    productReview.forEach(({ rating }) => {
       totalRating += rating;
-      return null;
     });
+    avgRating = totalRating / productReview.length;
   }
 
-  await Product.updateProduct(body.product, { rating: totalRating / productReview.length });
-
-  return ProductReview.create(body);
+  return Product.updateProduct(body.product, { rating: avgRating });
 };
 
 /**
