@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const { isEqual, isEmpty } = require('lodash');
+const { ObjectId } = require('mongodb');
 
 const { OrderDetail, Order, Cart } = require('../../models');
 const ApiError = require('../../utils/ApiError');
@@ -32,7 +33,7 @@ const integrateCartProduct = (cart, data) => {
  * @returns {Promise<ListOrderDetail>}
  */
 const getListOrdersDetailByOrderId = async (user, orderId, filter, options) => {
-  const order = await Order.findOne({ _id: orderId });
+  const order = await Order.findOne({ _id: ObjectId(orderId) });
   const cart = await Cart.find({ userId: user });
 
   if (!isEqual(user, order.user)) {
