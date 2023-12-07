@@ -5,8 +5,8 @@ const createCart = {
   body: Joi.object().keys({
     productId: Joi.string().required(),
     quantity: Joi.number().required(),
-    size: Joi.string(),
-    color: Joi.string(),
+    size: Joi.array().default([]),
+    color: Joi.string().default(''),
   }),
 };
 

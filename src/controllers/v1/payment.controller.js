@@ -3,12 +3,12 @@ const moment = require('moment');
 const querystring = require('qs');
 const crypto = require('crypto');
 const httpStatus = require('http-status');
+const request = require('request');
 
 const { Cart, User, Order } = require('../../models');
 const { VNP } = require('../../config/vnp');
 const ApiError = require('../../utils/ApiError');
 const catchAsync = require('../../utils/catchAsync');
-const { orderDetailService, orderService } = require('../../services/app');
 
 function sortObject(obj) {
   const sorted = {};
@@ -30,10 +30,19 @@ function sortObject(obj) {
   return sorted;
 }
 
+const getIPAddress = (req) => {
+  return (
+    req.headers['x-forwarded-for'] ||
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress
+  );
+};
+
 const createpayment = catchAsync(async (req, res) => {
   const {
     user: { _id },
-    body: { orderId, amount, language = 'vn' },
+    body: { orderId, amount, language = 'vn', bankCode = 'NCB' },
   } = req;
 
   const carts = await Cart.find({ userId: _id });
@@ -44,35 +53,25 @@ const createpayment = catchAsync(async (req, res) => {
 
   const date = new Date();
   const createDate = moment(date).format('YYYYMMDDHHmmss');
+  const ipAddr = getIPAddress(req);
 
-  const ipAddr =
-    req.headers['x-forwarded-for'] ||
-    req.connection.remoteAddress ||
-    req.socket.remoteAddress ||
-    req.connection.socket.remoteAddress;
-
-  let vnpUrl = VNP.URL;
   const returnUrl = `${VNP.RETURN_URL}/order/${orderId}?userId=${_id}`;
-  const bankCode = req.body.bankCode || 'NCB';
 
   const vnpParams = {
-    vnp_Version: '2.1.0',
-    vnp_Command: 'pay',
+    vnp_Version: VNP.VERSION,
     vnp_TmnCode: VNP.TMN_CODE,
-    vnp_Locale: isEmpty(language) ? 'vn' : language,
-    vnp_CurrCode: 'VND',
     vnp_TxnRef: orderId,
-    vnp_OrderInfo: `Thanh toan cho ma GD:${orderId}`,
+    vnp_Locale: isEmpty(language) ? 'vn' : language,
+    vnp_Command: 'pay',
+    vnp_CurrCode: 'VND',
     vnp_OrderType: 'other',
+    vnp_OrderInfo: `Thanh toan cho ma GD: ${orderId}`,
+    vnp_IpAddr: ipAddr,
+    vnp_BankCode: bankCode,
     vnp_Amount: amount * 100,
     vnp_ReturnUrl: returnUrl,
-    vnp_IpAddr: ipAddr,
     vnp_CreateDate: createDate,
   };
-
-  if (bankCode !== null && bankCode !== '') {
-    vnpParams.vnp_BankCode = bankCode;
-  }
 
   const params = sortObject(vnpParams);
   const signData = querystring.stringify(params, { encode: false });
@@ -81,7 +80,7 @@ const createpayment = catchAsync(async (req, res) => {
   // eslint-disable-next-line security/detect-new-buffer, no-buffer-constructor
   const signed = hmac.update(new Buffer(signData, 'utf-8')).digest('hex');
   params.vnp_SecureHash = signed;
-  vnpUrl += `?${querystring.stringify(params, { encode: false })}`;
+  const vnpUrl = `${VNP.URL}?${querystring.stringify(params, { encode: false })}`;
 
   return res.createSuccess({ url: vnpUrl });
 });
@@ -94,6 +93,7 @@ const getVnpayReturn = catchAsync(async ({ query }, res) => {
   const secureHash = params.vnp_SecureHash;
 
   delete params.vnp_SecureHash;
+
   delete params.vnp_SecureHashType;
 
   const vnpParams = sortObject(params);
@@ -129,11 +129,23 @@ const getVnpayIpn = catchAsync(async (req, res) => {
 
   delete vnpParams.vnp_SecureHash;
   delete vnpParams.vnp_SecureHashType;
+  // eslint-disable-next-line no-console
+  console.log(vnpParams, 'vnpParams');
+  const a = {
+    vnp_Amount: '1000000',
+    vnp_BankCode: 'NCB',
+    vnp_OrderInfo: 'Thanh toan cho ma GD: 65709fb439d5206b65edc7cba',
+    vnp_ResponseCode: '00',
+    vnp_TmnCode: 'X56H06H4',
+    vnp_TransactionNo: '14224059',
+    vnp_TxnRef: '65709fb439d5206b65edc7cba',
+  };
 
-  const vnpParam = sortObject(vnpParams);
-  const secretKey = VNP.HASH_SECRET;
-  const signData = querystring.stringify(vnpParam, { encode: false });
-  const hmac = crypto.createHmac('sha512', secretKey);
+  // const params = sortObject(vnpParams);
+  const signData = querystring.stringify(a, { encode: false });
+  // eslint-disable-next-line global-require
+  const cryptos = require('crypto');
+  const hmac = cryptos.createHmac('sha512', VNP.HASH_SECRET);
   // eslint-disable-next-line security/detect-new-buffer, no-buffer-constructor
   const signed = hmac.update(new Buffer(signData, 'utf-8')).digest('hex');
 
@@ -143,6 +155,10 @@ const getVnpayIpn = catchAsync(async (req, res) => {
 
   const checkOrderId = true; // Mã đơn hàng "giá trị của vnp_TxnRef" VNPAY phản hồi tồn tại trong CSDL của bạn
   const checkAmount = true; // Kiểm tra số tiền "giá trị của vnp_Amout/100" trùng khớp với số tiền của đơn hàng trong CSDL của bạn
+  // eslint-disable-next-line no-console
+  console.log(secureHash, 'secureHash');
+  // eslint-disable-next-line no-console
+  console.log(signed, 'signed');
   if (secureHash === signed) {
     if (checkOrderId) {
       if (checkAmount) {
@@ -183,19 +199,68 @@ const getVnpayIpn = catchAsync(async (req, res) => {
   }
 });
 
-const deleteOrder = catchAsync(async ({ params: { orderId } }, res) => {
-  await orderDetailService.deleteOrderDetailById(orderId);
+const querydr = catchAsync(async (req, res) => {
+  const date = new Date();
+  const txnRef = req.body.orderId;
+  const transactionDate = req.body.transDate;
+  const requestId = moment(date).format('HHmmss');
+  const command = 'querydr';
+  const orderInfo = `Truy van GD ma: ${txnRef}`;
 
-  const amount = await orderDetailService.calculatorAmount(orderId);
+  const ipAddr = getIPAddress(req);
 
-  await orderService.updateOrderById(orderId, { amount });
+  const createDate = moment(date).format('YYYYMMDDHHmmss');
 
-  res.success(true);
+  const arrayCreateDate = [
+    requestId,
+    VNP.VERSION,
+    command,
+    VNP.TMN_CODE,
+    txnRef,
+    transactionDate,
+    createDate,
+    ipAddr,
+    orderInfo,
+  ];
+
+  const hmac = crypto.createHmac('sha512', VNP.HASH_SECRET);
+
+  // eslint-disable-next-line security/detect-new-buffer, no-buffer-constructor
+  const secureHash = hmac.update(new Buffer(arrayCreateDate.join('|'), 'utf-8')).digest('hex');
+
+  const dataObj = {
+    vnp_RequestId: requestId,
+    vnp_Version: VNP.VERSION,
+    vnp_Command: command,
+    vnp_TmnCode: VNP.TMN_CODE,
+    vnp_TxnRef: txnRef,
+    vnp_OrderInfo: orderInfo,
+    vnp_TransactionDate: transactionDate,
+    vnp_CreateDate: createDate,
+    vnp_IpAddr: ipAddr,
+    vnp_SecureHash: secureHash,
+  };
+
+  request(
+    {
+      url: VNP.API,
+      method: 'POST',
+      json: true,
+      body: dataObj,
+    },
+    (error, response) => {
+      if (response.body.vnp_ResponseCode === '00') {
+        return res.success(true);
+      }
+
+      res.error(response.body.vnp_Message);
+    }
+  );
 });
 
 module.exports = {
+  getVnpayReturn,
   createpayment,
   getVnpayIpn,
-  deleteOrder,
-  getVnpayReturn,
+  querydr,
 };

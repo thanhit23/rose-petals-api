@@ -15,7 +15,6 @@ const createOrderDetail = async (body) => {
 };
 
 const integrateCartProduct = (cart, data) => {
-  console.log(data.results, 'data.results');
   return data.results.map(({ product, ...orders }) => {
     const productCart = cart.find(({ productId }) =>  String(productId) === String(product._id));
 
@@ -25,7 +24,6 @@ const integrateCartProduct = (cart, data) => {
 
 /**
  * Get order detail by Id
- * @param id
  * @param {Object} filter - Mongo filter
  * @param {Object} options - Query options
  * @param {string} [options.sortBy] - Sort option in the format: sortField:(desc|asc)
