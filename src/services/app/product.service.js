@@ -1,10 +1,10 @@
 const httpStatus = require('http-status');
 const slugify = require('slugify');
+const { first } = require('lodash');
 
 const { Product, Category, Brand, ProductReview } = require('../../models');
 const ApiError = require('../../utils/ApiError');
 const { productTransfomer } = require('../../transformer/admin');
-const { first } = require('lodash');
 
 /**
  * @param {String} name
@@ -58,7 +58,15 @@ const createProduct = async (body) => {
  */
 const queryProducts = async (filter, options) => {
   const data = await Product.paginate({ ...filter, deletedAt: null }, options);
-  return productTransfomer.getProductList(data);
+
+  const products = await Promise.all(
+    data.results.map(async (product) => {
+      const totalCommentCount = await ProductReview.find({ product: product._id });
+      return { ...product, totalComment: totalCommentCount.length };
+    })
+  );
+
+  return productTransfomer.getProductList({ ...data, results: products });
 };
 
 /**
