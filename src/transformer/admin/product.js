@@ -4,14 +4,15 @@ const baseUrl = process.env.APP_URL;
 const getProductList = (data) => {
   const { results, ...meta } = data;
   const products = results.map((i) => {
-    const { price, size, rating = 0, quantity = 0, sold = 0, description, slug, _id, name, category, brand, createdAt, updatedAt, deletedAt, images } = i.toObject();
+    const { price, size, rating = 0, quantity = 0, sold = 0, description, slug, _id, name, category, brand, createdAt, updatedAt, deletedAt, images } = i._doc;
     return {
       price,
       description,
       _id,
       name,
+      totalComment: i.totalComment,
       quantity,
-      rating,
+      rating: Number(rating.toFixed(1)),
       sold,
       size,
       slug,
