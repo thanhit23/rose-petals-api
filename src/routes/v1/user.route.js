@@ -5,6 +5,8 @@ const { userController } = require('../../controllers/v1');
 
 const router = express.Router();
 
+router.route('/analytics').get(userController.getAnalytics);
+router.route('/upload-avatar').post(userController.getAnalytics);
 router.route('/').put(validate(userValidation.updateUser), userController.updateUser);
 
 module.exports = router;

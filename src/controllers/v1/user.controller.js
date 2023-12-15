@@ -8,6 +8,12 @@ const updateUser = catchAsync(async ({ user: { _id }, body }, res) => {
   res.success(user);
 });
 
+const getAnalytics = catchAsync(async ({ user: { _id } }, res) => {
+  const user = await userService.getAnalytics(_id);
+  res.success(user);
+});
+
 module.exports = {
   updateUser,
+  getAnalytics,
 };

@@ -9,6 +9,7 @@ const updateUser = {
       gender: Joi.number().allow(null),
       phoneNumber: Joi.string().allow(null),
       dob: Joi.date().allow(null),
+      avatar: Joi.string().allow(null),
       location: Joi.string().allow(null),
     })
     .min(1),

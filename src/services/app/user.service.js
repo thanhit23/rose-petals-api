@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const httpStatus = require('http-status');
-const { User } = require('../../models');
+const { User, Order } = require('../../models');
 const ApiError = require('../../utils/ApiError');
 
 /**
@@ -91,6 +91,20 @@ const updateUserById = async (userId, updateBody, resetPassword = false) => {
   return user;
 };
 
+const getAnalytics = async (user) => {
+  const totalOrder = await Order.find({ user });
+  const awaitingShipment = await Order.find({ user, status: 1 });
+  const awaitingDelivery = await Order.find({ user, status: 2 });
+  const awaitingPayments = await Order.find({ user, status: 3 });
+
+  return {
+    totalOrder: totalOrder.length || 0,
+    awaitingShipment: awaitingShipment.length || 0,
+    awaitingDelivery: awaitingDelivery.length || 0,
+    awaitingPayments: awaitingPayments.length || 0,
+  };
+};
+
 /**
  * Delete user by id
  * @param {ObjectId} userId
@@ -108,6 +122,7 @@ const deleteUserById = async (userId) => {
 module.exports = {
   createUser,
   getUserByEmailAndRole,
+  getAnalytics,
   queryUsers,
   getUserById,
   getUserByEmail,
