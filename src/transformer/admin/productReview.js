@@ -8,6 +8,7 @@ const getReviews = (data) => {
       _id,
       user: {
         name: user?.name || null,
+        avatar: user?.avatar || null,
         _id: user?._id || null,
       },
       product: {
