@@ -91,6 +91,20 @@ const updateUserById = async (userId, updateBody, resetPassword = false) => {
   return user;
 };
 
+/**
+ * Update user by id
+ * @param {ObjectId} userId
+ * @param {Object} updateBody
+ * @returns {Promise<User>}
+ */
+const updateAvatar = async (userId, updateBody) => {
+  const user = await getUserById(userId);
+
+  Object.assign(user, updateBody);
+  await user.save();
+  return user;
+};
+
 const getAnalytics = async (user) => {
   const totalOrder = await Order.find({ user });
   const awaitingShipment = await Order.find({ user, status: 1 });
@@ -123,6 +137,7 @@ module.exports = {
   createUser,
   getUserByEmailAndRole,
   getAnalytics,
+  updateAvatar,
   queryUsers,
   getUserById,
   getUserByEmail,
