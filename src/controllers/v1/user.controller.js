@@ -8,6 +8,12 @@ const updateUser = catchAsync(async ({ user: { _id }, body }, res) => {
   res.success(user);
 });
 
+const uploadAvatar = catchAsync(async ({ user: { _id }, body }, res) => {
+  const dataUpdate = omitBy(body, isNil);
+  const user = await userService.updateAvatar(_id, dataUpdate);
+  res.success(user);
+});
+
 const getAnalytics = catchAsync(async ({ user: { _id } }, res) => {
   const user = await userService.getAnalytics(_id);
   res.success(user);
@@ -15,5 +21,6 @@ const getAnalytics = catchAsync(async ({ user: { _id } }, res) => {
 
 module.exports = {
   updateUser,
+  uploadAvatar,
   getAnalytics,
 };

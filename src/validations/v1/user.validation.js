@@ -15,6 +15,15 @@ const updateUser = {
     .min(1),
 };
 
+const uploadAvatar = {
+  body: Joi.object()
+    .keys({
+      avatar: Joi.string().allow(null),
+    })
+    .min(1),
+};
+
 module.exports = {
   updateUser,
+  uploadAvatar,
 };
