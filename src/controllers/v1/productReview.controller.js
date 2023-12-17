@@ -30,13 +30,13 @@ const getReviews = catchAsync(async (req, res) => {
   return res.success(result);
 });
 
-const updateReview = catchAsync(async ({ params: { productReviewId }, body }, res) => {
-  const ProductReview = await productReviewService.updateReviewById(productReviewId, body);
+const updateReview = catchAsync(async ({ params: { productReviewId }, body, query: { productId } }, res) => {
+  const ProductReview = await productReviewService.updateReviewById(productReviewId, body, productId);
   res.success(ProductReview);
 });
 
-const deleteReview = catchAsync(async ({ params: { productReviewId } }, res) => {
-  await productReviewService.deleteReviewById(productReviewId);
+const deleteReview = catchAsync(async ({ params: { productReviewId }, query: { productId } }, res) => {
+  await productReviewService.deleteReviewById(productReviewId, productId);
   res.success(true);
 });
 
