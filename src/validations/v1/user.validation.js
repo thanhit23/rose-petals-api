@@ -18,7 +18,7 @@ const updateUser = {
 const uploadAvatar = {
   body: Joi.object()
     .keys({
-      avatar: Joi.string().allow(null),
+      avatar: Joi.string().required(),
     })
     .min(1),
 };
