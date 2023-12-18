@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const httpStatus = require('http-status');
 const { User, Order } = require('../../models');
 const ApiError = require('../../utils/ApiError');
+const { log } = require('winston');
 
 /**
  * Create a user
@@ -66,8 +67,8 @@ const updateUserById = async (userId, updateBody, resetPassword = false) => {
   const user = await getUserById(userId);
   const { password = '' } = user;
 
-  if (!resetPassword) {
-    const mismatch = await bcrypt.compareSync(updateBody.currentPassword, password);
+  if (resetPassword) {
+    const mismatch = bcrypt.compareSync(updateBody.currentPassword, password);
 
     if (!mismatch) {
       throw new ApiError(httpStatus.BAD_REQUEST, 'Password mismatch');
