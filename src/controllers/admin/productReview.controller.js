@@ -8,9 +8,9 @@ const createReview = catchAsync(async ({ body }, res) => {
 });
 
 const getReviews = catchAsync(async ({ query }, res) => {
-  const filter = pick(query, ['name']);
+  const filter = pick(query, ['content']);
   filter.searchCriteria = {
-    name: 'like',
+    content: 'like',
   };
   const options = pick(query, ['sortBy', 'limit', 'page']);
   options.populate = 'user,product';
@@ -30,8 +30,8 @@ const updateReview = catchAsync(async ({ params: { productReviewId }, body }, re
   res.success(ProductReview);
 });
 
-const deleteReview = catchAsync(async ({ params: { productReviewId } }, res) => {
-  await productReviewService.deleteReviewById(productReviewId);
+const deleteReview = catchAsync(async ({ params: { productReviewId }, query: { productId } }, res) => {
+  await productReviewService.deleteReviewById(productReviewId, productId);
   res.success(true);
 });
 
