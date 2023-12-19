@@ -1,6 +1,6 @@
 const pick = require('../../utils/pick');
 const catchAsync = require('../../utils/catchAsync');
-const { productService } = require('../../services/app');
+const { productService } = require('../../services/admin');
 
 const createProduct = catchAsync(async ({ body }, res) => {
   await productService.validateCreateProduct(body);
