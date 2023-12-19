@@ -1,6 +1,5 @@
 const httpStatus = require('http-status');
 const slugify = require('slugify');
-const { first } = require('lodash');
 
 const { Product, Category, Brand, ProductReview } = require('../../models');
 const ApiError = require('../../utils/ApiError');
