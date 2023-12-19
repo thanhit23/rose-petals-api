@@ -12,6 +12,7 @@ const createReview = {
 const getReviews = {
   query: Joi.object().keys({
     user: Joi.string(),
+    content: Joi.string(),
     product: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
@@ -38,7 +39,10 @@ const updateReview = {
 
 const deleteReview = {
   params: Joi.object().keys({
-    productReviewId: Joi.string().custom(objectId),
+    productReviewId: Joi.string().custom(objectId).required(),
+  }),
+  query: Joi.object().keys({
+    productId: Joi.string().custom(objectId).required(),
   }),
 };
 
