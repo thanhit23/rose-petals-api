@@ -11,6 +11,7 @@ router.post('/register', validate(authValidation.register), authController.regis
 router.post('/login', validate(authValidation.login), authController.login);
 router.post('/logout', validate(authValidation.logout), authController.logout);
 router.get('/me', auth(roles.admin), authController.me);
+router.put('/change-password', auth(roles.admin), authController.changePassword);
 
 module.exports = router;
 
