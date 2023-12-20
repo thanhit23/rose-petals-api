@@ -58,6 +58,26 @@ const refreshAuth = async (refreshToken) => {
  * @param {string} newPassword
  * @returns {Promise}
  */
+const resetPasswordAdmin = async (id, newPassword) => {
+  try {
+    const user = await userService.getUserById(id);
+
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Admin not found');
+    }
+
+    await userService.updateUserById(id, newPassword);
+  } catch (error) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Password reset failed');
+  }
+};
+
+/**
+ * Reset password
+ * @param {string} resetPasswordToken
+ * @param {string} newPassword
+ * @returns {Promise}
+ */
 const resetPassword = async (resetPasswordToken, newPassword) => {
   try {
     const resetPasswordTokenDoc = await tokenService.verifyToken(resetPasswordToken, tokenTypes.RESET_PASSWORD);
@@ -95,6 +115,7 @@ const verifyEmail = async (verifyEmailToken) => {
 
 module.exports = {
   loginUserWithEmailAndPasswordAndRole,
+  resetPasswordAdmin,
   logout,
   refreshAuth,
   resetPassword,

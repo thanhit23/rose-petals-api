@@ -20,11 +20,17 @@ const logout = catchAsync(async (req, res) => {
   res.success(true);
 });
 
+const changePassword = catchAsync(async ({ user: { _id }, body }, res) => {
+  await authService.resetPasswordAdmin(_id, body);
+  res.success(true);
+});
+
 const me = catchAsync(async (req, res) => {
   res.success(req.user);
 });
 
 module.exports = {
+  changePassword,
   register,
   login,
   logout,
