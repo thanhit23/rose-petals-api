@@ -87,7 +87,7 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
       throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
     }
 
-    await userService.updateUserById(user.id, { password: newPassword, email: user.email }, true);
+    await userService.forgotPassword(user._id, { password: newPassword }, true);
     await Token.deleteMany({ user: user.id, type: tokenTypes.RESET_PASSWORD });
   } catch (error) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Password reset failed');
