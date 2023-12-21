@@ -2,7 +2,6 @@ const bcrypt = require('bcryptjs');
 const httpStatus = require('http-status');
 const { User, Order } = require('../../models');
 const ApiError = require('../../utils/ApiError');
-const { log } = require('winston');
 
 /**
  * Create a user
@@ -98,6 +97,19 @@ const updateUserById = async (userId, updateBody, resetPassword = false) => {
  * @param {Object} updateBody
  * @returns {Promise<User>}
  */
+const forgotPassword = async (userId, password) => {
+  const user = await getUserById(userId);
+  Object.assign(user, password);
+  await user.save();
+  return user;
+};
+
+/**
+ * Update user by id
+ * @param {ObjectId} userId
+ * @param {Object} updateBody
+ * @returns {Promise<User>}
+ */
 const updateAvatar = async (userId, updateBody) => {
   const user = await getUserById(userId);
 
@@ -136,6 +148,7 @@ const deleteUserById = async (userId) => {
 
 module.exports = {
   createUser,
+  forgotPassword,
   getUserByEmailAndRole,
   getAnalytics,
   updateAvatar,
